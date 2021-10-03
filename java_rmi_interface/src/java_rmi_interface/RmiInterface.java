@@ -9,14 +9,12 @@ public interface RmiInterface extends Remote {
 	
 	/*--Insert array element--*/
 	public boolean insertArrayElement (int index, int clientId, String stringVal) throws RemoteException;
+	public int fetchArrayCapacity () throws RemoteException;
 	
 	/*---Acquiring/Releasing the locks---*/
 	
-	public boolean requestReadLock (int index, int clientId);
 	
-	public boolean requestWriteLock (int index, int clientId);
-	
-	public void releaseLock (int index, int clientId, String lockToRelease);
+	public void releaseLock (int index, int clientId, String lockToRelease) throws RemoteException;
 	
 	/*---Read/Write using locks---*/
 	

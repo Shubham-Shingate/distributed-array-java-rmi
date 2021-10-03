@@ -4,10 +4,22 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class StringObj {
+	private static final String EMPTY_STR = "";
 	
-	private String stringVal = "";
+	private String stringVal;
 	
-	private ReadWriteLock rwLock = new ReentrantReadWriteLock();
+	private ReadWriteLock rwLock; 
+
+	public StringObj(String stringVal) {
+		super();
+		rwLock = new ReentrantReadWriteLock();
+		this.stringVal = stringVal;
+	}
+
+	public StringObj() {
+		rwLock = new ReentrantReadWriteLock();
+		this.stringVal = EMPTY_STR;
+	}
 
 	public String getStringVal() {
 		return stringVal;
@@ -25,20 +37,10 @@ public class StringObj {
 		this.rwLock = rwLock;
 	}
 
-	public StringObj(String stringVal) {
-		super();
-		this.stringVal = stringVal;
-	}
-
-	public StringObj() {
-		
-	}
 
 	@Override
 	public String toString() {
-		return "StringWrapperObj [stringVal=" + stringVal + ", rwLock=" + rwLock + "]";
+		return "StringObj [stringVal=" + stringVal + ", rwLock=" + rwLock + "]";
 	}
-	
-	
 	
 }

@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import java_rmi_interface.RmiInterface;
 
@@ -13,29 +14,24 @@ public class RemoteStringArray extends UnicastRemoteObject implements RmiInterfa
 	
 	private List<StringObj> strArray;
 	
-	protected RemoteStringArray(int size) throws RemoteException {
+	public RemoteStringArray(int size, List<String> arrayStr) throws RemoteException  {
 		this.strArray = new ArrayList<StringObj>(size);
+		for (int i = 0; i < size; i++) {
+			String s = arrayStr.get(i);
+			System.out.println("Initalising location " + i + " with initial string " + s);
+			strArray.add(i, new StringObj(s));
+		}
 	}
-	
+
 	@Override
 	public String[] printAck() throws RemoteException {
 		System.out.println("Hello this is an ack" + strArray);
 		return null;
 	}
-	
 
 	@Override
-	public boolean requestReadLock(int index, int clientId) {
-		return strArray.get(index).getRwLock().readLock().tryLock();
-	}
-
-	@Override
-	public boolean requestWriteLock(int index, int clientId) {
-		return strArray.get(index).getRwLock().writeLock().tryLock();
-	}
-
-	@Override
-	public void releaseLock(int index, int clientId, String lockToRelease) {
+	public void releaseLock(int index, int clientId, String lockToRelease) throws RemoteException {
+		
 		if (lockToRelease.equals("R")) {
 			strArray.get(index).getRwLock().readLock().unlock();
 		} else {
@@ -57,6 +53,8 @@ public class RemoteStringArray extends UnicastRemoteObject implements RmiInterfa
 
 	@Override
 	public String fetchElementForRead(int index, int clientId) throws RemoteException {
+		System.out.println(strArray.get(index).getRwLock());
+		ReentrantReadWriteLock rc=(ReentrantReadWriteLock) strArray.get(index).getRwLock();
 		if (this.requestReadLock(index, clientId)) {
 			String resultStr = strArray.get(index).getStringVal();
 			this.releaseLock(index, clientId, "R");
@@ -88,4 +86,16 @@ public class RemoteStringArray extends UnicastRemoteObject implements RmiInterfa
 		}
 	}
 	
+	private boolean requestReadLock(int index, int clientId) {
+		return strArray.get(index).getRwLock().readLock().tryLock();
+	}
+
+	private boolean requestWriteLock(int index, int clientId) {
+		return strArray.get(index).getRwLock().writeLock().tryLock();
+	}
+
+	@Override
+	public int fetchArrayCapacity() throws RemoteException {
+		return strArray.size();
+	}
 }

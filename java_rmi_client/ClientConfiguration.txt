@@ -1,0 +1,3 @@
+remoteStringArray
+localhost
+1099
