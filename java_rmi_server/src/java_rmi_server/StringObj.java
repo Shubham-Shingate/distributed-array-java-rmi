@@ -4,21 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 class Lock {
-	int clientId;
-	boolean set;
-
-	public synchronized int getClientId() {
+	public int getClientId() {
 		return clientId;
 	}
 	public void setClientId(int clientId) {
 		this.clientId = clientId;
 	}
-	public boolean isSet() {
-		return set;
+	public boolean isLocked() {
+		return locked;
 	}
-	public void setSet(boolean set) {
-		this.set = set;
+	public void setLocked(boolean locked) {
+		this.locked = locked;
 	}
+	
+	int clientId;
+	boolean locked;
 }
 
 public class StringObj {
@@ -56,7 +56,7 @@ public class StringObj {
 			return clientReadLocks.get(clientId);
 		}
 		
-		if (writeLock == null || !writeLock.isSet()) {
+		if (writeLock == null || !writeLock.isLocked()) {
 			
 			Lock newReadLock = new Lock();
 			newReadLock.clientId = clientId;
@@ -74,10 +74,10 @@ public class StringObj {
 				return this.writeLock;
 			}
 			
-			if (writeLock.isSet() && writeLock.getClientId() == clientId) {
+			if (writeLock.isLocked() && writeLock.getClientId() == clientId) {
 				writeLock.clientId = clientId;
 				return this.writeLock;
-			} else if (writeLock.isSet()) {
+			} else if (writeLock.isLocked()) {
 				return null;
 			} 
 
@@ -87,7 +87,7 @@ public class StringObj {
 	
 	private void setWriteLockForClient(int clientId) {
 		writeLock = new Lock();
-		writeLock.setSet(true);
+		writeLock.setLocked(true);
 		writeLock.setClientId(clientId);
 	}
 	
@@ -107,5 +107,4 @@ public class StringObj {
 			writeLock = null;
 		}
 	}
-	
 }
