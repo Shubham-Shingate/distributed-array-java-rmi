@@ -82,7 +82,7 @@ public class RmiClient {
 				case "5": // Concatenate a String
 					try{
 						String str = sc.nextLine();
-					    System.out.println(concatenateString(str,0,clientId,rmiInterfaceStub) == false ? "Failure!! Please try again after some time.." : "Success!!!");
+					    System.out.println(concatenateString(str,elementLocation,clientId,rmiInterfaceStub) == false ? "Failure!! Please try again after some time.." : "Success!!!");
 					}catch(RemoteException e) {
 					}
 					break;
@@ -114,10 +114,10 @@ public class RmiClient {
 		String orginalString=EMPTY_STR;
 		boolean fetch=false;
 		try{
-			
-			String str=rmiInterface.fetchElementForRead(index, clientId);
-			if(null!=str) {
+			orginalString=rmiInterface.fetchElementForRead(index, clientId);
+			if(null!=orginalString) {
 				orginalString=orginalString.concat(newStr);
+				rmiInterface.releaseLock(index, clientId);
 				fetch=rmiInterface.writeBackElement(orginalString,index, clientId);
 			}
 			
